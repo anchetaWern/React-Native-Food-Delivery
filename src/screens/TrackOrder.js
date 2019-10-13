@@ -16,6 +16,8 @@ const GOOGLE_API_KEY = Config.GOOGLE_API_KEY;
 
 import {regionFrom} from '../helpers/location';
 
+import {AppContext} from '../../GlobalContext';
+
 const orderSteps = [
   'Finding a driver',
   'Driver is on the way to pick up your order',
@@ -29,6 +31,8 @@ class TrackOrder extends Component {
       title: 'Track Order',
     };
   };
+
+  static contextType = AppContext;
 
   state = {
     isSearching: true,
@@ -52,7 +56,6 @@ class TrackOrder extends Component {
       'restaurant_address',
     );
 
-    this.username = 'wernancheta'; // the unique username of the customer
     this.available_drivers_channel = null; // the pusher channel where all drivers and customers are subscribed to
     this.user_ride_channel = null; // the pusher channel exclusive to the customer and driver in a given ride
     this.pusher = null;
@@ -77,7 +80,7 @@ class TrackOrder extends Component {
       // make a request to all drivers
       setTimeout(() => {
         this.available_drivers_channel.trigger('client-driver-request', {
-          customer: {username: this.username},
+          customer: {username: this.context.user_id},
           restaurant_location: this.restaurant_location,
           customer_location: this.customer_location,
           restaurant_address: this.restaurant_address,
@@ -87,7 +90,7 @@ class TrackOrder extends Component {
     });
 
     this.user_ride_channel = this.pusher.subscribe(
-      'private-ride-' + this.username,
+      'private-ride-' + this.context.user_id,
     );
 
     this.user_ride_channel.bind('client-driver-response', data => {

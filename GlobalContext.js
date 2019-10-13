@@ -4,6 +4,9 @@ export const AppContext = React.createContext({});
 export class AppContextProvider extends React.Component {
   state = {
     cart_items: [],
+
+    user_id: 'wernancheta',
+    user_name: 'Wern Ancheta',
   };
 
   constructor(props) {
