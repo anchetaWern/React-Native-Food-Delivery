@@ -8,10 +8,12 @@ import {
 } from 'react-native';
 import axios from 'axios';
 
+import Config from 'react-native-config';
+
 import NavHeaderRight from '../components/NavHeaderRight';
 import ListCard from '../components/ListCard';
 
-const BASE_URL = 'YOUR NGROK HTTPS URL';
+const BASE_URL = Config.NGROK_HTTPS_URL;
 
 class FoodList extends Component {
   static navigationOptions = ({navigation}) => {

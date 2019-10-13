@@ -10,7 +10,7 @@ import Config from 'react-native-config';
 
 const CHANNELS_APP_KEY = Config.CHANNELS_APP_KEY;
 const CHANNELS_APP_CLUSTER = Config.CHANNELS_APP_CLUSTER;
-const BASE_URL = 'YOUR NGROK HTTPS URL';
+const BASE_URL = Config.NGROK_HTTPS_URL;
 
 const GOOGLE_API_KEY = Config.GOOGLE_API_KEY;
 
