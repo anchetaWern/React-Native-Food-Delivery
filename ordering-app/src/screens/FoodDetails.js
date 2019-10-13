@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert} from 'react-native';
+import {View, Button, Alert} from 'react-native';
 
 import NavHeaderRight from '../components/NavHeaderRight';
 import PageCard from '../components/PageCard';
@@ -10,7 +10,9 @@ class FoodDetails extends Component {
   static navigationOptions = ({navigation}) => {
     return {
       title: navigation.getParam('item').name.substr(0, 12) + '...',
-      headerRight: <NavHeaderRight />,
+      headerRight: (
+        <NavHeaderRight toScreen={'OrderSummary'} buttonText={'View Basket'} />
+      ),
     };
   };
 
@@ -19,6 +21,8 @@ class FoodDetails extends Component {
   state = {
     qty: 1,
   };
+
+  //
 
   constructor(props) {
     super(props);
@@ -61,5 +65,6 @@ class FoodDetails extends Component {
     );
   }
 }
+//
 
 export default FoodDetails;

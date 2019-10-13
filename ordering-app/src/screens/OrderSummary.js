@@ -25,6 +25,8 @@ const GOOGLE_API_KEY = Config.GOOGLE_API_KEY;
 
 Geocoder.init(GOOGLE_API_KEY);
 
+const BASE_URL = Config.NGROK_HTTPS_URL;
+
 class OrderSummary extends Component {
   static navigationOptions = {
     title: 'Order Summary',
@@ -186,7 +188,7 @@ class OrderSummary extends Component {
   }
   //
 
-  placeOrder = () => {
+  placeOrder = async () => {
     const {customer_location, customer_address} = this.state;
 
     const {

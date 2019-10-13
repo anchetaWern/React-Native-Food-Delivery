@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {
   View,
+  Text,
   Button,
   TextInput,
   FlatList,
@@ -19,14 +20,18 @@ class FoodList extends Component {
   static navigationOptions = ({navigation}) => {
     return {
       title: 'Hungry?',
-      headerRight: <NavHeaderRight />,
+      headerRight: (
+        <NavHeaderRight toScreen={'OrderSummary'} buttonText={'View Basket'} />
+      ),
     };
   };
+  //
 
   state = {
     foods: [],
     query: '',
   };
+  //
 
   async componentDidMount() {
     try {

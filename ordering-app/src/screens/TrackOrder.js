@@ -95,8 +95,9 @@ class TrackOrder extends Component {
 
     this.user_ride_channel.bind('client-driver-response', data => {
       // customer responds to driver's response
+      const {hasDriver} = this.state;
       this.user_ride_channel.trigger('client-driver-response', {
-        response: this.state.hasDriver ? 'no' : 'yes',
+        response: hasDriver ? 'no' : 'yes'
       });
     });
 
@@ -140,7 +141,9 @@ class TrackOrder extends Component {
     });
   }
 
-  contactDriver = () => {};
+  contactDriver = () => {
+    this.props.navigation.navigate('ContactDriver');
+  };
 
   render() {
     const {driverLocation, orderStatusText} = this.state;

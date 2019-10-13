@@ -4,9 +4,8 @@ export const AppContext = React.createContext({});
 export class AppContextProvider extends React.Component {
   state = {
     cart_items: [],
-
     user_id: 'wernancheta',
-    user_name: 'Wern Ancheta',
+    user_name: 'Wern Ancheta'
   };
 
   constructor(props) {
@@ -37,6 +36,7 @@ export class AppContextProvider extends React.Component {
         value={{
           ...this.state,
           addToCart: this.addToCart,
+          setRoom: this.setRoom,
         }}>
         {this.props.children}
       </AppContext.Provider>
