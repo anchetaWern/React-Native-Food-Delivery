@@ -4,8 +4,6 @@ import {View, StyleSheet} from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {ChatManager, TokenProvider} from '@pusher/chatkit-client';
 
-import NavHeaderRight from '../components/NavHeaderRight';
-
 import Config from 'react-native-config';
 
 const CHATKIT_INSTANCE_LOCATOR_ID = Config.CHATKIT_INSTANCE_LOCATOR_ID;
@@ -17,10 +15,7 @@ import {AppContext} from '../../GlobalContext';
 class ContactDriver extends Component {
   static navigationOptions = ({navigation}) => {
     return {
-      title: 'Contact Driver',
-      headerRight: (
-        <NavHeaderRight toScreen={'TrackOrder'} buttonText={'Track Order'} />
-      ),
+      title: 'Contact Driver'
     };
   };
   //
