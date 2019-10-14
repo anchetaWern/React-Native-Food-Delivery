@@ -58,6 +58,9 @@ class OrderMap extends Component {
   constructor(props) {
     super(props);
 
+    this.user_id = 'johndoe';
+    this.user_name = 'John Doe';
+
     this.available_drivers_channel = null; // this is where customer will send a request to any available driver
 
     this.ride_channel = null; // the channel used for communicating the current location
@@ -150,6 +153,15 @@ class OrderMap extends Component {
         },
         {enableHighAccuracy: true},
       );
+    }
+
+    try {
+      await axios.post(`${BASE_URL}/login`, {
+        user_id: this.user_id,
+        user_name: this.user_name,
+      });
+    } catch (err) {
+      console.log('error creating user: ', err);
     }
 
     this.setState({
@@ -289,6 +301,16 @@ class OrderMap extends Component {
     this.ride_channel.trigger('client-order-update', {
       step: 2,
     });
+
+    try {
+      await axios.post(`${BASE_URL}/room`, {
+        room_id: this.room_id,
+        room_name: this.room_name,
+        user_id: this.user_id,
+      });
+    } catch (room_err) {
+      console.log('room error: ', room_err);
+    }
   };
 
   _deliveredOrder = () => {
@@ -312,7 +334,10 @@ class OrderMap extends Component {
   };
 
   _contactCustomer = () => {
-
+    this.props.navigation.navigate('ContactCustomer', {
+      user_id: this.user_id,
+      room_id: this.room_id,
+    });
   };
 
   _acceptOrder = () => {
@@ -334,9 +359,7 @@ class OrderMap extends Component {
 
       // listen for the acknowledgement from the customer
       this.ride_channel.bind('client-driver-response', customer_response => {
-
         if (customer_response.response == 'yes') {
-
           this.setState({
             hasOrder: true,
           });
@@ -344,6 +367,11 @@ class OrderMap extends Component {
           this.props.navigation.setParams({
             showHeaderButton: true,
           });
+
+          const {room_id, room_name} = customer_response;
+
+          this.room_id = room_id; // chat room ID
+          this.room_name = room_name;
 
           this.ride_channel.trigger('client-found-driver', {
             driver: {

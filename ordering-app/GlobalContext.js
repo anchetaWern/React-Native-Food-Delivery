@@ -5,12 +5,21 @@ export class AppContextProvider extends React.Component {
   state = {
     cart_items: [],
     user_id: 'wernancheta',
-    user_name: 'Wern Ancheta'
+    user_name: 'Wern Ancheta',
+    room_id: '',
+    room_name: '',
   };
 
   constructor(props) {
     super(props);
   }
+
+  setRoom = (id, name) => {
+    this.setState({
+      room_id: id,
+      room_name: name,
+    });
+  };
 
   addToCart = (item, qty) => {
     let found = this.state.cart_items.filter(el => el.id === item.id);

@@ -8,6 +8,7 @@ import FoodList from './src/screens/FoodList';
 import FoodDetails from './src/screens/FoodDetails';
 import OrderSummary from './src/screens/OrderSummary';
 import TrackOrder from './src/screens/TrackOrder';
+import ContactDriver from './src/screens/ContactDriver';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 
@@ -17,6 +18,7 @@ const RootStack = createStackNavigator(
     FoodDetails,
     OrderSummary,
     TrackOrder,
+    ContactDriver,
   },
   {
     initialRouteName: 'FoodList',

@@ -5,12 +5,14 @@ import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
 import OrderMap from './src/screens/OrderMap';
+import ContactCustomer from './src/screens/ContactCustomer';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 
 const RootStack = createStackNavigator(
   {
-    OrderMap
+    OrderMap,
+    ContactCustomer,
   },
   {
     initialRouteName: 'OrderMap',

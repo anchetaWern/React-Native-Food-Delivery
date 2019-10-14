@@ -25,6 +25,9 @@ const GOOGLE_API_KEY = Config.GOOGLE_API_KEY;
 
 Geocoder.init(GOOGLE_API_KEY);
 
+const random = require('string-random');
+import axios from 'axios';
+
 const BASE_URL = Config.NGROK_HTTPS_URL;
 
 class OrderSummary extends Component {
@@ -191,10 +194,31 @@ class OrderSummary extends Component {
   placeOrder = async () => {
     const {customer_location, customer_address} = this.state;
 
+    const room_id = random();
+    const room_name = `Order ${room_id}`;
+
+    this.context.setRoom(room_id, room_name);
+
     const {
       address: restaurant_address,
       location: restaurant_location,
     } = this.context.cart_items[0].restaurant;
+
+    try {
+      // login chatkit user
+      await axios.post(`${BASE_URL}/login`, {
+        user_id: this.context.user_id,
+        user_name: this.context.user_name,
+      });
+
+      await axios.post(`${BASE_URL}/room`, {
+        room_id,
+        room_name: room_name,
+        user_id: this.context.user_id,
+      });
+    } catch (err) {
+      console.log('login err: ', err);
+    }
 
     this.props.navigation.navigate('TrackOrder', {
       customer_location,

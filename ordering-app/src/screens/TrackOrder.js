@@ -97,7 +97,9 @@ class TrackOrder extends Component {
       // customer responds to driver's response
       const {hasDriver} = this.state;
       this.user_ride_channel.trigger('client-driver-response', {
-        response: hasDriver ? 'no' : 'yes'
+        response: hasDriver ? 'no' : 'yes',
+        room_id: hasDriver ? '0' : this.context.room_id,
+        room_name: hasDriver ? '' : this.context.room_name,
       });
     });
 
