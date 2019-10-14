@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   floatingButtonContainer: {
     position: 'absolute',
     bottom: '2%',
-    right: '2%',
+    left: '2%',
     alignSelf: 'flex-end',
   },
   modal: {
