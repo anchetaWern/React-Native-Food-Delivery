@@ -19,6 +19,7 @@ import Config from 'react-native-config';
 
 import MapViewDirections from 'react-native-maps-directions';
 import axios from 'axios';
+import RNPusherPushNotifications from 'react-native-pusher-push-notifications';
 
 import {regionFrom} from '../helpers/location';
 
@@ -27,6 +28,31 @@ const CHANNELS_APP_CLUSTER = Config.CHANNELS_APP_CLUSTER;
 const BASE_URL = Config.NGROK_HTTPS_URL;
 
 const GOOGLE_API_KEY = Config.GOOGLE_API_KEY;
+
+RNPusherPushNotifications.setInstanceId(Config.BEAMS_INSTANCE_ID);
+
+const subscribeToRoom = room_id => {
+  RNPusherPushNotifications.subscribe(
+    room_id,
+    (statusCode, response) => {
+      console.error(statusCode, response);
+    },
+    () => {
+      console.log('Success');
+    },
+  );
+};
+
+const triggerNotification = async (room_id, push_type, data) => {
+  try {
+    await axios.post(`${BASE_URL}/push/${room_id}`, {
+      push_type,
+      data,
+    });
+  } catch (err) {
+    console.log('error triggering notification: ', err);
+  }
+};
 
 class OrderMap extends Component {
   static navigationOptions = ({navigation}) => {
@@ -60,6 +86,7 @@ class OrderMap extends Component {
 
     this.user_id = 'johndoe';
     this.user_name = 'John Doe';
+    this.user_type = 'driver';
 
     this.available_drivers_channel = null; // this is where customer will send a request to any available driver
 
@@ -155,18 +182,23 @@ class OrderMap extends Component {
       );
     }
 
+    this.setState({
+      locationPermission: location_permission,
+    });
+
+    RNPusherPushNotifications.on('notification', noty => {
+      Alert.alert(noty.title, noty.body);
+    });
+
     try {
       await axios.post(`${BASE_URL}/login`, {
         user_id: this.user_id,
         user_name: this.user_name,
+        user_type: this.user_type,
       });
     } catch (err) {
       console.log('error creating user: ', err);
     }
-
-    this.setState({
-      locationPermission: location_permission,
-    });
   }
 
 
@@ -291,7 +323,6 @@ class OrderMap extends Component {
   }
   //
 
-
   _pickedOrder = async () => {
     this.props.navigation.setParams({
       headerButtonLabel: 'Delivered Order',
@@ -311,9 +342,15 @@ class OrderMap extends Component {
     } catch (room_err) {
       console.log('room error: ', room_err);
     }
+
+    await triggerNotification(
+      this.room_id,
+      'driver_picked_order',
+      this.username,
+    );
   };
 
-  _deliveredOrder = () => {
+  _deliveredOrder = async () => {
     this.ride_channel.unbind('client-driver-response');
     this.pusher.unsubscribe('private-ride-' + this.state.customer.username);
 
@@ -331,6 +368,12 @@ class OrderMap extends Component {
     this.ride_channel.trigger('client-order-update', {
       step: 3,
     });
+
+    await triggerNotification(
+      this.room_id,
+      'driver_delivered_order',
+      this.user_name,
+    );
   };
 
   _contactCustomer = () => {
@@ -358,50 +401,61 @@ class OrderMap extends Component {
       });
 
       // listen for the acknowledgement from the customer
-      this.ride_channel.bind('client-driver-response', customer_response => {
-        if (customer_response.response == 'yes') {
-          this.setState({
-            hasOrder: true,
-          });
-
-          this.props.navigation.setParams({
-            showHeaderButton: true,
-          });
-
-          const {room_id, room_name} = customer_response;
-
-          this.room_id = room_id; // chat room ID
-          this.room_name = room_name;
-
-          this.ride_channel.trigger('client-found-driver', {
-            driver: {
-              name: this.user_name,
-            },
-            location: {
-              latitude: currentLocation.latitude,
-              longitude: currentLocation.longitude,
-              accuracy: currentLocation.accuracy,
-            },
-          });
-
-          setTimeout(() => {
-            this.ride_channel.trigger('client-order-update', {
-              step: 1,
+      this.ride_channel.bind(
+        'client-driver-response',
+        async customer_response => {
+          if (customer_response.response == 'yes') {
+            this.setState({
+              hasOrder: true,
             });
-          }, 2000);
-        } else {
-          Alert.alert(
-            'Order no longer available',
-            'Someone else already took the order. Or the customer cancelled.',
-            [
-              {
-                text: 'Ok',
+
+            this.props.navigation.setParams({
+              showHeaderButton: true,
+            });
+
+            const {room_id, room_name} = customer_response;
+
+            this.room_id = room_id; // chat room ID
+            this.room_name = room_name;
+
+            subscribeToRoom(room_id);
+
+            await triggerNotification(
+              room_id,
+              'driver_accepted_order',
+              this.username,
+            );
+
+            this.ride_channel.trigger('client-found-driver', {
+              driver: {
+                name: this.user_name,
               },
-            ],
-            {cancelable: false},
-          );
-        }
-      });
+              location: {
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+                accuracy: currentLocation.accuracy,
+              },
+            });
+
+            setTimeout(() => {
+              this.ride_channel.trigger('client-order-update', {
+                step: 1,
+              });
+            }, 2000);
+          } else {
+            Alert.alert(
+              'Order no longer available',
+              'Someone else already took the order. Or the customer cancelled.',
+              [
+                {
+                  text: 'Ok',
+                },
+              ],
+              {cancelable: false},
+            );
+          }
+        },
+      );
     });
   };
 

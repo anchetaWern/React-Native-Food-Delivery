@@ -209,6 +209,7 @@ class OrderSummary extends Component {
       await axios.post(`${BASE_URL}/login`, {
         user_id: this.context.user_id,
         user_name: this.context.user_name,
+        user_type: this.context.user_type,
       });
 
       await axios.post(`${BASE_URL}/room`, {
