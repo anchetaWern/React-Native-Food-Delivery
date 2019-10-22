@@ -105,7 +105,7 @@ node index.js
 ~/ngrok http 5000
 ```
 
-Run the two apps. The first instance runs the bundler on a different port from the default one. Be sure to set the port (from the dev settings) then disconnect the device before running the second app:
+10. Run the two apps. The first instance runs the bundler on a different port from the default one. Be sure to set the port (from the dev settings) then disconnect the device before running the second app:
 
 ```
 cd RNFoodDelivery
