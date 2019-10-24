@@ -1,6 +1,12 @@
 # React-Native-Food-Delivery
 A food delivery app built with React Native, Pusher Channels, Chatkit, and Beams.
 
+You can read the tutorial here:
+
+- [Create a food ordering app in React Native - Part 1: Making an order](http://pusher.com/tutorials/food-ordering-app-react-native-part-1)
+- [Create a food ordering app in React Native - Part 2: Adding the driver app and chat functionality](http://pusher.com/tutorials/food-ordering-app-react-native-part-2)
+- [Create a food ordering app in React Native - Part 3: Adding push notifications](http://pusher.com/tutorials/food-ordering-app-react-native-part-3)
+
 It includes the following features:
 
 - Food ordering
